@@ -72,7 +72,7 @@ const projectiles = [];
 const enemies = [];
 
 function spawnEnemies() {
-    // setInterval(() => {
+     setInterval(() => {
         let x
         let y;
         const radius = Math.random() * (30-10)+10
@@ -94,25 +94,41 @@ function spawnEnemies() {
         }
         
         enemies.push(new Enemy(x,y,radius,color,velocity))
-    // }, 1000)
+     }, 1000)
 }
 
 
+let animationId
 function animate() {
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
     c.clearRect(0,0,x*2,y*2)
     player.draw();
     projectiles.forEach(projectile => {
         projectile.update()
     })
 
-    enemies.forEach(enemy => {
+    enemies.forEach((enemy, index) => {
         enemy.update()
-
-        projectiles.forEach(projectile=>{
+        projectiles.forEach((projectile,projectileIndex)=>{
             const dist = Math.hypot(projectile.x - enemy.x,projectile.y - enemy.y)
             console.log(dist)
+            //object touch
+            
+            if (dist - enemy.radius - projectile.radius < 1){
+                setTimeout(() => {
+                    enemies.splice(index,1);
+                    projectiles.splice(projectileIndex,1)
+                }, 0);
+                
+            }
         })
+        
+        const enemyDistance = Math.hypot(player.x - enemy.x, player.y - enemy.y)
+        console.log(enemyDistance);
+        //end game
+        if(enemyDistance - enemy.radius - player.   radius < 1) {
+            cancelAnimationFrame(animationId);
+        }
     })
    
     
